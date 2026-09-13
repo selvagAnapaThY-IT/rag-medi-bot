@@ -31,11 +31,16 @@ function App() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/query", {
+      // Determine API URL (relative '/query' when hosted in Docker/production, or explicit backend port for local dev)
+      const isLocalDev = window.location.port === "3000";
+      const apiUrl = isLocalDev ? "http://127.0.0.1:8000/query" : "/query";
+
+      const res = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: userText }),
       });
+
 
       if (!res.ok) {
         throw new Error(`HTTP error! Status: ${res.status}`);

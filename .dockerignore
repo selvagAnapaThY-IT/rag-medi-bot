@@ -1,0 +1,15 @@
+.env
+*.env
+.git
+.gitignore
+env/
+rag_env/
+venv/
+__pycache__/
+*.pyc
+node_modules/
+frontend/rag-chat-frontend/node_modules/
+frontend/rag-chat-frontend/build/
+.vscode/
+.idea/
+.DS_Store

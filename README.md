@@ -8,8 +8,10 @@ MediBot AI is a Retrieval-Augmented Generation (RAG) system built with **FastAPI
 
 ```
 rag/
+├── Dockerfile          # Multi-stage Docker build for Render deployment
+├── .dockerignore       # Docker build exclusions
 ├── src/
-│   ├── app.py          # FastAPI server endpoints (/query)
+│   ├── app.py          # FastAPI server & static file serving
 │   ├── query.py        # RAG pipeline with FAISS retriever & Gemini LLM
 │   ├── loader.py       # PDF document loader & FAISS vectorstore generator
 │   ├── rag.py          # RAG chain wrapper
@@ -24,69 +26,51 @@ rag/
 
 ---
 
-## 🚀 Quick Start Guide
+## 🚀 How to Deploy on Render using Docker
 
-### 1. Backend Setup
+1. **Push your code to GitHub** (Ensure latest changes are pushed).
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/selvagAnapaThY-IT/rag-medi-bot.git
-   cd rag-medi-bot
-   ```
+2. **Log into Render**:
+   Go to [dashboard.render.com](https://dashboard.render.com/) and click **New +** -> **Web Service**.
 
-2. **Create & Activate Virtual Environment**:
-   ```bash
-   python -m venv rag_env
-   # On Windows:
-   .\rag_env\Scripts\activate
-   # On macOS/Linux:
-   source rag_env/bin/activate
-   ```
+3. **Connect Repository**:
+   Select your GitHub repository: `selvagAnapaThY-IT/rag-medi-bot`.
 
-3. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+4. **Configure Web Service**:
+   - **Name**: `rag-medi-bot` (or your preferred name)
+   - **Language**: `Docker`
+   - **Region**: Choose nearest region (e.g. Oregon, Singapore, Frankfurt)
+   - **Branch**: `main`
+   - **Dockerfile Path**: `./Dockerfile`
 
-4. **Configure API Key**:
-   Create a `.env` file in the root directory:
-   ```env
-   GOOGLE_API_KEY=your_google_gemini_api_key
-   ```
+5. **Set Environment Variables**:
+   Under **Environment Variables**, add:
+   - Key: `GOOGLE_API_KEY`
+   - Value: `YOUR_ACTUAL_GEMINI_API_KEY`
 
-5. **Generate Vectorstore**:
-   Place PDF documents inside `src/faiss_index/data/` and run:
-   ```bash
-   python src/loader.py
-   ```
+6. **Deploy**:
+   Click **Create Web Service**. Render will automatically:
+   - Build the React frontend production bundle.
+   - Install Python backend dependencies.
+   - Launch your FastAPI server on Render's assigned `$PORT`.
 
-6. **Start FastAPI Backend**:
-   ```bash
-   python -m uvicorn src.app:app --reload --port 8000
-   ```
-   The backend API will run at `http://127.0.0.1:8000`.
+Once deployed, visit your Render `.onrender.com` URL to use the full application!
 
 ---
 
-### 2. Frontend Setup
+## 💻 Local Development
 
-1. **Navigate to Frontend Directory**:
-   ```bash
-   cd frontend/rag-chat-frontend
-   ```
-
-2. **Install Dependencies & Start React Server**:
-   ```bash
-   npm install
-   npm start
-   ```
-   The React UI will run at `http://localhost:3000`.
-
----
-
-### 3. Terminal CLI Chat Mode (Optional)
-
-If you prefer to chat directly in your terminal:
+### Backend
 ```bash
-python src/chat.py
+python -m venv rag_env
+.\rag_env\Scripts\activate
+pip install -r requirements.txt
+python src/app.py
+```
+
+### Frontend
+```bash
+cd frontend/rag-chat-frontend
+npm install
+npm start
 ```
