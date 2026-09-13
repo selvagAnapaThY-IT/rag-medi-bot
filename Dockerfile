@@ -22,6 +22,9 @@ ENV PORT=8000
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Pre-download HuggingFace embedding model into image cache so cold-starts are instant
+RUN python -c "from langchain_community.embeddings import HuggingFaceEmbeddings; HuggingFaceEmbeddings(model_name='all-MiniLM-L6-v2')"
+
 # Copy source code and pre-built frontend
 COPY . ./
 COPY --from=frontend-builder /app/frontend/build ./frontend/rag-chat-frontend/build

@@ -46,12 +46,13 @@ if os.path.exists(BUILD_DIR):
     app.mount("/static", StaticFiles(directory=os.path.join(BUILD_DIR, "static")), name="static")
 
     @app.get("/{full_path:path}")
-    async def serve_react_app(full_path: str):
+    def serve_react_app(full_path: str):
         # Serve exact file if exists, otherwise fallback to index.html
         file_path = os.path.join(BUILD_DIR, full_path)
         if full_path and os.path.exists(file_path) and os.path.isfile(file_path):
             return FileResponse(file_path)
         return FileResponse(os.path.join(BUILD_DIR, "index.html"))
+
 
 if __name__ == "__main__":
     import uvicorn
