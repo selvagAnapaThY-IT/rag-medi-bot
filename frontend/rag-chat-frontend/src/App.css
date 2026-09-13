@@ -1,0 +1,111 @@
+/* Whole page background */
+.page {
+  background: #f0f5ff;
+  height: 100vh;
+  padding-top: 40px;
+  text-align: center;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+/* Title */
+.title {
+  color: #004aad;
+  font-size: 28px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+/* Chat UI box (center card) */
+.chat-container {
+  width: 480px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0px 4px 20px rgba(0, 68, 170, 0.2);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #dce6ff;
+}
+
+/* Scroll area */
+.chat-box {
+  height: 450px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Message bubble */
+.msg {
+  padding: 12px 16px;
+  border-radius: 14px;
+  max-width: 75%;
+  margin: 10px 0;
+  line-height: 1.5;
+  animation: fadeIn 0.2s ease-in;
+}
+
+/* User bubble (right) */
+.user {
+  background: #007bff;
+  color: white;
+  margin-left: auto;
+  text-align: right;
+  box-shadow: 0px 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Bot bubble (left) */
+.bot {
+  background: #edf2ff;
+  border: 1px solid #ccd9ff;
+  color: #003b8b;
+  margin-right: auto;
+  text-align: left;
+}
+
+/* Input box container */
+.input-box {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+/* Input field */
+input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #b0c8ff;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+}
+
+/* Input focus effect */
+input:focus {
+  border-color: #006bff;
+  box-shadow: 0px 0px 6px rgba(0, 107, 255, 0.4);
+}
+
+/* Send button */
+button {
+  padding: 12px 18px;
+  background: #0056d6;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+/* Button hover */
+button:hover {
+  background: #003c99;
+}
+
+/* Message fade animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

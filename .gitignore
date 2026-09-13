@@ -26,6 +26,12 @@ frontend/rag-chat-frontend/build/
 .npm
 *.log
 
+# OneDrive unhydrated binary placeholders
+frontend/rag-chat-frontend/public/*.png
+*.png
+*.jpg
+*.jpeg
+
 # IDE & OS files
 .vscode/
 .idea/
