@@ -1,0 +1,11 @@
+langchain==0.1.20
+langchain-core==0.1.52
+langchain-community==0.0.38
+langchain-google-genai==1.0.3
+faiss-cpu==1.8.0
+pypdf==4.2.0
+python-dotenv==1.0.1
+
+# LangChain 0.1.x in this project expects pydantic v1 compatibility.
+pydantic<2
+

@@ -1,0 +1,33 @@
+# Environment variables & secrets
+.env
+*.env
+.env.*
+
+# Python virtual environments & bytecode
+env/
+rag_env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Large files & index data
+*.pdf
+faiss_index/
+loader_output.txt
+
+# Node modules & build files
+node_modules/
+frontend/rag-chat-frontend/node_modules/
+frontend/rag-chat-frontend/build/
+.npm
+*.log
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
