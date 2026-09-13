@@ -14,9 +14,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Large files & index data
+# Large files (PDFs excluded, FAISS index allowed)
 *.pdf
-faiss_index/
 loader_output.txt
 
 # Node modules & build files

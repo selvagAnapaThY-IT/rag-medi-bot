@@ -1,5 +1,7 @@
 # rag_query.py
 import os
+import sys
+import subprocess
 from dotenv import load_dotenv
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
@@ -9,38 +11,65 @@ load_dotenv()
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 load_dotenv(os.path.join(REPO_ROOT, ".env"))
 
-# Resolve FAISS path. Check repo-root/src/faiss_index then repo-root/faiss_index
-FAISS_PATH = os.path.join(REPO_ROOT, "src", "faiss_index")
-if not os.path.exists(FAISS_PATH):
-    FAISS_PATH = os.path.join(REPO_ROOT, "faiss_index")
-if not os.path.exists(FAISS_PATH):
-    FAISS_PATH = os.path.join(os.path.dirname(__file__), "faiss_index")
+_vectorstore = None
+_retriever = None
 
-if not os.path.exists(FAISS_PATH):
-    raise FileNotFoundError(
-        f"FAISS index not found at '{FAISS_PATH}'. Run loader.py to create it."
+def get_faiss_path():
+    possible_paths = [
+        os.path.join(REPO_ROOT, "src", "faiss_index"),
+        os.path.join(REPO_ROOT, "faiss_index"),
+        os.path.join(os.path.dirname(__file__), "faiss_index"),
+    ]
+    for p in possible_paths:
+        if os.path.exists(p) and (os.path.exists(os.path.join(p, "index.faiss")) or os.path.exists(os.path.join(p, "index.pkl"))):
+            return p
+    return possible_paths[0]
+
+def get_retriever():
+    global _vectorstore, _retriever
+    if _retriever is not None:
+        return _retriever
+
+    faiss_path = get_faiss_path()
+
+    # If FAISS index does not exist, check if we can run loader.py automatically
+    index_file = os.path.join(faiss_path, "index.faiss")
+    if not os.path.exists(index_file):
+        print(f"FAISS index not found at '{faiss_path}'. Attempting auto-generation using loader.py...")
+        loader_script = os.path.join(os.path.dirname(__file__), "loader.py")
+        if os.path.exists(loader_script):
+            try:
+                subprocess.run([sys.executable, loader_script], check=True)
+            except Exception as e:
+                print(f"Warning: Auto-generating index via loader.py failed: {e}")
+
+    if not os.path.exists(faiss_path):
+        raise FileNotFoundError(
+            f"FAISS index not found at '{faiss_path}'. Run loader.py or commit pre-built index."
+        )
+
+    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    _vectorstore = FAISS.load_local(
+        faiss_path,
+        embeddings=embeddings,
+        allow_dangerous_deserialization=True,
     )
+    _retriever = _vectorstore.as_retriever(search_kwargs={"k": 3})
+    return _retriever
 
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-vectorstore = FAISS.load_local(
-    FAISS_PATH,
-    embeddings=embeddings,
-    allow_dangerous_deserialization=True,
-)
-
-retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
-
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
-
-llm = ChatGoogleGenerativeAI(
-    model=MODEL_NAME,
-    google_api_key=GOOGLE_API_KEY,
-)
-
+def get_llm():
+    google_api_key = os.getenv("GOOGLE_API_KEY")
+    model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+    return ChatGoogleGenerativeAI(
+        model=model_name,
+        google_api_key=google_api_key,
+    )
 
 def ask_rag(question: str):
     """Given a question, return RAG answer and sources."""
+    retriever = get_retriever()
+    llm = get_llm()
+
     docs = retriever.invoke(question)
     if not docs:
         return {"answer": "No relevant information found in the documents.", "sources": []}
@@ -60,6 +89,7 @@ Answer:"""
 
     response = llm.invoke(prompt)
     return {"answer": response.content, "sources": sources}
+
 
 
 
